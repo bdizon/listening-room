@@ -3,5 +3,7 @@ from .views import index
 
 
 urlpatterns = [
-    path('', index)  # render index template whenever there is a blank path, "homepage"
+    path('', index),  # render index template whenever there is a blank path, "homepage"
+    path('join', index),
+    path('create', index)
 ]
