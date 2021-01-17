@@ -4,8 +4,6 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import HomePage from "./Homepage";
-import RoomJoinPage from "./RoomJoinPage";
-import CreateRoomPage from "./CreateRoomPage";
 
 export default class App extends Component {
     constructor(props) {
@@ -19,9 +17,8 @@ export default class App extends Component {
         return (
          // need to return one element 
         <div>
+            {/* <h1>{this.props.name}</h1> */}
             <HomePage />
-            <RoomJoinPage />
-            <CreateRoomPage />
         </div>) 
         // return <h1>Testing React Code</h1>;
         // return <h1>{this.props.name}</h1>; // output the name "bianca" in the html file; use squiggly brackets to embeded js i html code

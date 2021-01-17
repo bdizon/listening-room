@@ -8,7 +8,7 @@ export default class CreateRoomPage extends Component {
     }
 
     render() { // return actual html code to display
-        return <p>This is the create room page</p>;
+        return <p>This is the create room page.</p>;
         
     }
 }

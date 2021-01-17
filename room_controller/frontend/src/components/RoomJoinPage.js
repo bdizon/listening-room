@@ -8,7 +8,7 @@ export default class RoomJoinPage extends Component {
     }
 
     render() { // return actual html code to display
-        return <p>This is the room join page</p>;
+        return <p>This is the room join page.</p>;
         
     }
 }
