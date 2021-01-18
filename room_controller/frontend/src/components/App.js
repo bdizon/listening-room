@@ -16,7 +16,7 @@ export default class App extends Component {
     render() { // return actual html code to display
         return (
          // need to return one element 
-        <div>
+        <div className="center">
             {/* <h1>{this.props.name}</h1> */}
             <HomePage />
         </div>) 
