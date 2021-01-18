@@ -53,9 +53,12 @@ export default class CreateRoomPage extends Component {
         // send request to localhost or wherever react is running on to api/create-room
         //once we get a response convert it to json
         // then take the data and do something with it
+        // fetch("/api/create-room", requestOptions)
+        //     .then((response) => response.json())
+        //     .then((data) => console.log(data)); // prints out the json of the data sent to the endpoint server
         fetch("/api/create-room", requestOptions)
-            .then((response) => response.json())
-            .then((data) => console.log(data)); // prints out the json of the data sent to the endpoint server
+        .then((response) => response.json())
+        .then((data) => this.props.history.push("/room/" + data.code));// redirect user to the webpages corresponding to the /room/code
     }
 
     render() { // return actual html code to display
