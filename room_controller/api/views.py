@@ -14,7 +14,24 @@ class RoomView(generics.ListAPIView): # sets up view
     queryset = Room.objects.all()   # what to return
     serializer_class = RoomSerializer   # convert to some format to return
 
+# gets room and its details
+class GetRoom(APIView): # inherit from APIView
+    serializer_class = RoomSerializer   # define class
+    lookup_url_kwarg = 'code'   # pass url with code we need
+
+    def get(self, request, format=None):
+        code = request.GET.get(self.lookup_url_kwarg)   # get what the code is from the url, get info about the url, find parameter in url that matches 'code'
+        if code != None: 
+            room = Room.objects.filter(code=code) # code is unique so it will always give us one value
+            if len(room) > 0:
+                data = RoomSerializer(room[0]).data   # serialize the one room and taking the data (python dict)
+                data['is_host'] = self.request.session.session_key == room[0].host  # create new is_host a new key in the data, host is the session key of whoevers is the host of the session
+                return Response(data, status=status.HTTP_200_OK)
+            return Response({'Room Not Found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Bad Request': 'Code paramter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+
 # automatically dispatch to correct method
+# shows the creat-room page where the rooms can be created and changed
 class CreateRoomView(APIView):
     serializer_class = CreateRoomSerializer
     def post(self, request, format=None):
@@ -26,7 +43,7 @@ class CreateRoomView(APIView):
             guest_can_pause = serializer.data.get('guest_can_pause') # method with field we want
             votes_to_skip = serializer.data.get('votes_to_skip')
             host = self.request.session.session_key
-            # make sure the current session has the settings for the gues_can_pause and votes_to_skip
+            # make sure the current session has the settings for the guest_can_pause and votes_to_skip
             queryset = Room.objects.filter(host=host) # check if any of the rooms have the same host
             if queryset.exists():
                 room = queryset[0]
