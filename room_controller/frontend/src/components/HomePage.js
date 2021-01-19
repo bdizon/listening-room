@@ -11,7 +11,7 @@ export default class HomePage extends Component {
         this.state = {
             roomCode: null,
         };
-       
+       this.clearRoomCode = this.clearRoomCode.bind(this);
     }
 
     // check if user is in room
@@ -37,7 +37,7 @@ export default class HomePage extends Component {
             <Grid container spacing={3}>
                 <Grid item xs={12} align="center">
                     <Typography variant="h3" compact="3">
-                        Listening Rooma
+                        Listening Room
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
@@ -54,6 +54,14 @@ export default class HomePage extends Component {
         );
     }
 
+    // leave room
+    // set state roomCode to null
+    clearRoomCode() {
+        this.setState({
+            roomCode: null,
+        });
+    }
+
     render() { // return actual html code to display
         return ( // redirect to correct page
             <Router>
@@ -63,7 +71,11 @@ export default class HomePage extends Component {
                     }}/>
                     <Route path='/join' component={RoomJoinPage}/>
                     <Route path='/create' component={CreateRoomPage}/>
-                    <Route path="/room/:roomCode" component={Room}></Route>
+                    <Route 
+                        path="/room/:roomCode" 
+                        render={(props) => {
+                        return <Room {...props} leaveRoomCallback={this.clearRoomCode}/>;   //pass method and not called, room will call leaveRoomCallback
+                        }}/>
                 </Switch>
             
             </Router>
