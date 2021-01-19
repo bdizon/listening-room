@@ -90,3 +90,17 @@ class UserInRoom(APIView):
         }
         # handle user not in room in frontend
         return JsonResponse(data, status=status.HTTP_200_OK) # take python dictionary and serialize using a json serializer sends it to the request
+
+# leave room
+class LeaveRoom(APIView):
+    # post request bc changing info on api server
+    def post(self, request, format=None):
+        if 'room_code' in self.request.session:
+            self.request.session.pop('room_code')   # deletes room code fro user session
+            host_id = self.request.session.session_key  # gets host_id for current user session
+            room_results = Room.objects.filter(host=host_id)     # gets Room object that has host=host_id
+            if len(room_results) > 0:   #   if Room object exists then delete
+                room = room_results[0]
+                room.delete()   # delete room
+
+        return Response({"Message": "Success"}, status=status.HTTP_200_OK)
