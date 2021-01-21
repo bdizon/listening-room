@@ -13,3 +13,10 @@ class CreateRoomSerializer(serializers.ModelSerializer):
     class Meta: # make sure payload is valid
        model = Room
        fields = ('guest_can_pause', 'votes_to_skip') 
+
+# update room serializer
+class UpdateRoomSerializer(serializers.ModelSerializer):
+    code = serializers.CharField(validators=[])   # redefine codefield in serializer istead of from models
+    class Meta: # make sure payload is valid
+       model = Room
+       fields = ('guest_can_pause', 'votes_to_skip', 'code') # dont need to pass unique code bc code is just for checking
