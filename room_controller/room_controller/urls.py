@@ -19,5 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), # used by react code internally
-    path('', include('frontend.urls'))  # forward facing urls
+    path('', include('frontend.urls')),  # forward facing urls
+    path('spotify/', include('spotify.urls')), #spotify endpoint connection
+
 ]
