@@ -11,6 +11,7 @@ export default class Room extends Component {
             guestCanPause: false,
             isHost: false,
             showSettings: false,    // use to indicate if settings option should be shown
+            spotifyAuthenticated: false,
         };
 
         this.roomCode = this.props.match.params.roomCode; // match is the prop with info about how we go to the component from the react routers
@@ -21,6 +22,7 @@ export default class Room extends Component {
         this.renderSettingsButton = this.renderSettingsButton.bind(this);
         this.renderSettings = this.renderSettings.bind(this);
         this.getRoomDetails = this.getRoomDetails.bind(this);
+        this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.getRoomDetails();   // update state 
     }
 
@@ -40,7 +42,24 @@ export default class Room extends Component {
                     guestCanPause: data.guest_can_pause,
                     isHost: data.is_host,
                 });
+                if (this.state.isHost){
+                    this.authenticateSpotify();    // call here if user is host
+                }   
             });
+    }
+
+    //
+    authenticateSpotify() {
+        fetch('/spotify/is-authenticated').then((response) => response.json()).then((data) =>{
+            this.setState({
+                spotifyAuthenticated: data.status});
+                if (!data.status) {
+                    fetch('/spotify/get-auth-url').then((response) => response.json()).then((data) => {
+                        window.location.replace(data.url); // js native.redirect user to url to authenticate app
+                    });
+                }
+        });
+
     }
 
     // updateShowSettings(value) {
