@@ -28,7 +28,7 @@ class GetRoom(APIView): # inherit from APIView
                 data['is_host'] = self.request.session.session_key == room[0].host  # create new is_host a new key in the data, host is the session key of whoevers is the host of the session
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Room Not Found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'Bad Request': 'Code paramter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 # send room code to join a room
 # check for validity and then redirect
@@ -116,7 +116,7 @@ class UpdateRoom(APIView):
 
         serializer = self.serializer_class(data=request.data)   # pass data to serializer to check if data is valid
         if serializer.is_valid():
-            guests_can_pause = serializer.data.get('guest_can_pause')
+            guest_can_pause = serializer.data.get('guest_can_pause')
             votes_to_skip = serializer.data.get('votes_to_skip')
             code = serializer.data.get('code')
             
