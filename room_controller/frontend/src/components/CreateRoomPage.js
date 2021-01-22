@@ -9,19 +9,35 @@ import { Link } from "react-router-dom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { Collapse } from "@material-ui/core";
+import Alert  from "@material-ui/lab/Alert";
 
 export default class CreateRoomPage extends Component {
-    defaultVotes = 2;
+    
+    static defaultProps = {
+        votesToSkip: 2,
+        guestCanPause: true,
+        update: false,
+        roomCode: null,
+        updateCallback: () => {},
+
+      };
+
     constructor(props) {
         super(props);
         // default state, forces component to change state, send info to backend
         this.state = {
-            guestCanPause: true,
-            votesToSkip: this.defaultVotes,
+            guestCanPause: this.props.guestCanPause,
+            votesToSkip: this.props.votesToSkip,
+            errorMsg: "",
+            successMsg: "",
         };
-        this.handleVotesChange = this.handleVotesChange.bind(this)
-        this.handleGuestCanPauseChange = this.handleGuestCanPauseChange.bind(this)
+        this.handleVotesChange = this.handleVotesChange.bind(this);
+        this.handleGuestCanPauseChange = this.handleGuestCanPauseChange.bind(this);
         this.handleRoomButtonPressed = this.handleRoomButtonPressed.bind(this); // bind method to class, can have access to this keyword in method
+        this.renderUpdateButtons = this.renderUpdateButtons.bind(this); 
+        this.renderCreateButtons = this.renderCreateButtons.bind(this);
+        this.handleUpdateButtonPressed = this.handleRoomButtonPressed.bind(this);
 
     }
 
@@ -53,13 +69,73 @@ export default class CreateRoomPage extends Component {
         // send request to localhost or wherever react is running on to api/create-room
         //once we get a response convert it to json
         // then take the data and do something with it
-        // fetch("/api/create-room", requestOptions)
-        //     .then((response) => response.json())
-        //     .then((data) => console.log(data)); // prints out the json of the data sent to the endpoint server
         fetch("/api/create-room", requestOptions)
-        .then((response) => response.json())
-        .then((data) => this.props.history.push("/room/" + data.code));// redirect user to the webpages corresponding to the /room/code
+            .then((response) => response.json())
+            // .then((data) => console.log(this.props.toString()));
+            .then((data) => this.props.history.push("/room/" + data.code));
     }
+
+    // room update request to backend point
+    handleUpdateButtonPressed() {
+        // send request to endpoint to allow to create new room
+        const requestOptions = {
+            method: 'PATCH',    // UpdateRoom class in views.py takes patch request not a post
+            headers: {'Content-Type': 'application/json'}, // kind of content
+            body: JSON.stringify({  //put js object converted into json string to send
+                votes_to_skip: this.state.votesToSkip,    // field names have to match the names in the server
+                guest_can_pause: this.state.guestCanPause,
+                code: this.props.roomCode,
+            }),
+        };
+        fetch("/api/update-room", requestOptions).then((response) => {
+            if (response.ok) {
+                this.setState({
+                    successMsg: "Room updated successfully!"
+                });
+            } else {
+                this.setState({
+                    errorMsg: "Error updating room..."
+                });
+            }
+            this.props.updateCallback();
+        });
+    }
+
+    // method for rendering create buttons
+    // rendering a grid container inside a grid container wont affect how it looks
+    renderCreateButtons() {
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align="center">
+                    <Button color="primary" variant="contained" onClick={this.handleRoomButtonPressed}>
+                        Create A Room
+                    </Button>
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <Button color="secondary" variant="contained" to="/" component={Link}>
+                        Back
+                    </Button>
+                </Grid>
+            </Grid>
+        );
+
+    }
+
+    // method for rendering update buttons
+    // grid doesnt need a higher level grid container bc its just one grid item
+    renderUpdateButtons() {
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align="center">
+                    <Button color="primary" variant="contained" onClick={this.handleUpdateButtonPressed}>
+                        Update Room
+                    </Button>
+                </Grid>
+            </Grid>
+            
+        );
+    }
+
 
     render() { // return actual html code to display
         // return actual html code to display
@@ -67,10 +143,20 @@ export default class CreateRoomPage extends Component {
          // uses css flexbox
          // spacing how much space in between boxes
          // 12 fills the entire screen
-        return <Grid container spacing={1}>
+         // new grid item to store error/succcess msgs
+        const title = this.props.update ? "Update Room" : "Create Room";
+        return (
+        <Grid container spacing={1}>
+            <Grid item xs={12} align="center">      
+                <Collapse in={this.state.errorMsg != "" || this.state.successMsg != ""}>
+                    {this.state.successMsg != "" ? (<Alert serverity="success" onClose={() => {this.setState({ successMsg: ""});}
+                    }>{this.state.successMsg}</Alert>) : (<Alert sverity="error" onClose={() => {this.setState({ errorMsg: ""});}
+                }>{this.state.errorMsg}</Alert>)}
+                </Collapse>
+            </Grid>
             <Grid item xs={12} align="center">      
                 <Typography component="h4" variant="h4">
-                    Create A Room
+                    {title}
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">      
@@ -80,7 +166,7 @@ export default class CreateRoomPage extends Component {
                             Guest Control of Playback State
                         </div>
                     </FormHelperText>
-                    <RadioGroup row defaultValue="true" onChange={this.handleGuestCanPauseChange}>
+                    <RadioGroup row defaultValue={this.props.guestCanPause.toString()} onChange={this.handleGuestCanPauseChange}>
                         <FormControlLabel 
                             value="true" 
                             control={<Radio color="primary"/>} 
@@ -99,8 +185,8 @@ export default class CreateRoomPage extends Component {
                     <TextField required={true} 
                         type="number" 
                         onChange={this.handleVotesChange} 
-                        defaultValue={this.defaultVotes} 
-                        inputProps={{min: 1, style: { textAlign: " center" },}}/>
+                        defaultValue={this.state.votesToSkip.toString()} 
+                        inputProps={{min: 1, style: { textAlign: "center" },}}/>
                     <FormHelperText>
                         <div align="center">
                             Votes Required to Skip Song
@@ -108,18 +194,9 @@ export default class CreateRoomPage extends Component {
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={12} align="center">
-                <Button color="primary" variant="contained" onClick={this.handleRoomButtonPressed}>
-                    Create A Room
-                </Button>
-            </Grid>
-            <Grid item xs={12} align="center">
-                <Button color="secondary" variant="contained" to="/" component={Link}>
-                    Back
-                </Button>
-            </Grid>
-
-        </Grid>;    
-        
+            {this.props.update ? this.renderUpdateButtons() : this.renderCreateButtons()} 
+        </Grid> 
+        );
     }
 }
+
