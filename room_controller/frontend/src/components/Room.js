@@ -16,11 +16,12 @@ export default class Room extends Component {
         this.roomCode = this.props.match.params.roomCode; // match is the prop with info about how we go to the component from the react routers
 
         // use room code to request to get its data from the backend
-        this.getRoomDetails();   // update state 
         this.leaveButtonPressed = this.leaveButtonPressed.bind(this);// leave button
-        // this.updateShowSettings = this.updateShowSettings.bind(this); // update showSetting in this.state
+        this.updateShowSettings = this.updateShowSettings.bind(this); // update showSetting in this.state
         this.renderSettingsButton = this.renderSettingsButton.bind(this);
         this.renderSettings = this.renderSettings.bind(this);
+        this.getRoomDetails = this.getRoomDetails.bind(this);
+        this.getRoomDetails();   // update state 
     }
 
     // function to get room details
@@ -47,7 +48,7 @@ export default class Room extends Component {
     //         showSettings: value,
     //     });
     // }
-    updateShowSettings = (value) => {
+    updateShowSettings(value) {
         this.setState( {
             showSettings: value,
         });
@@ -89,8 +90,8 @@ export default class Room extends Component {
                     update={true} 
                     votesToskip={this.state.votesToSkip} 
                     guestCanPause={this.state.guestCanPause} 
-                    roomCode={this.state.roomCode} 
-                    updateCallback={null}
+                    roomCode={this.roomCode} 
+                    updateCallback={this.getRoomDetails}
                 />
             </Grid>
             <Grid item xs={12} align="center">
