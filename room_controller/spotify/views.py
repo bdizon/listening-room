@@ -27,7 +27,7 @@ class AuthURL(APIView):
 
         return Response({'url': url}, status=status.HTTP_200_OK)
 
-# get info from response from above url
+# get info from response from above url (from the redirect url, it automatically invokes this function)
 # get access token
 def spotify_callback(request, format=None):
     code = request.GET.get('code')
@@ -111,3 +111,29 @@ class CurrentSong(APIView):
         }
         # song is custon object to send to the frontend
         return Response(song, status=status.HTTP_200_OK)
+
+# pause song
+class PauseSong(APIView):
+    def put(self, response, format=None):
+        # check if user has permission
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        # check if the current user is the host/owner of the room or user is has been given the privilege
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            pause_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
+
+# play song
+class PlaySong(APIView):
+    def put(self, response, format=None):
+        # check if user has permission
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        # check if the current user is the host/owner of the room or user is has been given the privilege
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            play_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
