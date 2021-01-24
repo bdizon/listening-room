@@ -2,7 +2,10 @@ from .models import SpotifyToken
 from django.utils import timezone
 from datetime import timedelta
 from .credentials import CLIENT_SECRET, CLIENT_ID
-from requests import post
+from requests import post, put, get
+
+BASE_URL = "https://api.spotify.com/v1/me/"
+
 
 # get existng tokens from database
 def get_user_tokens(session_id):
@@ -52,7 +55,24 @@ def refresh_spotify_token(session_id):
 
     access_token = response.get('access_token')
     token_type = response.get('token_type')
-    refresh_token = response.get('refresh_token')
+    # refresh_token = response.get('refresh_token') # causing bug bc refresh_toke does not change??
     expires_in = response.get('expires_in')
 
     update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
+
+# request info and connect to spotify api
+def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
+    tokens = get_user_tokens(session_id)
+    headers = {'Content-Type': 'application/json',
+               'Authorization': "Bearer " + tokens.access_token}
+
+    if post_:
+        post(BASE_URL + endpoint, headers=headers)
+    if put_:
+        put(BASE_URL + endpoint, headers=headers)
+
+    response = get(BASE_URL + endpoint, {}, headers=headers) # empty dict is syntax for get request
+    try:
+        return response.json()
+    except:
+        return {'Error': 'Issue with request'}
