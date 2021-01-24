@@ -1,3 +1,3 @@
 # Listening Room
 
-## Listen to music with friends.
+Listen to music with friends.
