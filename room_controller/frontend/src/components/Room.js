@@ -62,7 +62,7 @@ export default class Room extends Component {
                 isHost: data.is_host,
                 });
                 if (this.state.isHost) {
-                this.authenticateSpotify();
+                this.authenticateSpotify(); // send user url to authenticate app's access to spotify info
                 }
             });
     }
