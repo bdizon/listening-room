@@ -62,6 +62,7 @@ def spotify_callback(request, format=None):
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(self.request.session.session_key)
+        
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
 # return info about current songs
@@ -121,6 +122,7 @@ class PauseSong(APIView):
         # check if the current user is the host/owner of the room or user is has been given the privilege
         if self.request.session.session_key == room.host or room.guest_can_pause:
             pause_song(room.host)
+
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({}, status=status.HTTP_403_FORBIDDEN)
@@ -134,6 +136,7 @@ class PlaySong(APIView):
         # check if the current user is the host/owner of the room or user is has been given the privilege
         if self.request.session.session_key == room.host or room.guest_can_pause:
             play_song(room.host)
+
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({}, status=status.HTTP_403_FORBIDDEN)
