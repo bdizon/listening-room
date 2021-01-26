@@ -9,7 +9,7 @@ import {
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
-//needed to import them separately 
+//needed to import them separately bc diff buttons?
 
 export default class MusicPlayer extends Component {
     constructor(props) {
@@ -33,6 +33,7 @@ export default class MusicPlayer extends Component {
         fetch("/spotify/play", requestOptions);
         }
 
+    // render the songs and details
     render() {
         const songProgress = (this.props.time / this.props.duration) * 100
         return (

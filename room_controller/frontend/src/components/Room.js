@@ -113,6 +113,7 @@ export default class Room extends Component {
         });
     }
 
+    // change the state of showSettings
     updateShowSettings(value) {
         this.setState({
           showSettings: value,
@@ -121,6 +122,7 @@ export default class Room extends Component {
 
     // render what the settings are
     // add grid container because it is its own page
+    // reuse the createroompage to use its formatting for the settings page
     renderSettings() {
         return (
             <Grid container spacing={1}>
@@ -146,7 +148,7 @@ export default class Room extends Component {
         );
     }
 
-    // method that returns html settings
+    // method that renders the settings button
     // only want to show settings when user is host
     renderSettingsButton() {
         return(
