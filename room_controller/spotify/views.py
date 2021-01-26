@@ -85,6 +85,7 @@ class CurrentSong(APIView):
         if 'error' in response or 'item' not in response:
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+        # get song details
         item = response.get('item')
         duration = item.get('duration_ms')
         progress = response.get('progress_ms')
@@ -94,12 +95,14 @@ class CurrentSong(APIView):
 
         artist_string = ""
 
+        # get several artists
         for i, artist in enumerate(item.get('artists')):
             if i > 0:
                 artist_string += ", "
             name = artist.get('name')
             artist_string += name
 
+        # pass object to frontend
         song = {
             'title': item.get('name'),
             'artist': artist_string,
