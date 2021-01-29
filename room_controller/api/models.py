@@ -17,3 +17,4 @@ class Room(models.Model):
     guest_can_pause = models.BooleanField(null=False, default=False)    # can guests pause
     votes_to_skip = models.IntegerField(null=False, default=1)  # num of votes to skip song
     created_at = models.DateTimeField(auto_now_add=True)
+    current_song = models.CharField(max_length=50, null=True)
