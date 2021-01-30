@@ -4,6 +4,7 @@ import CreateRoomPage from "./CreateRoomPage";
 import Room from "./Room";
 import { Grid, Typography, Button, ButtonGroup } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import Info from "./Info";
 
 export default class HomePage extends Component {
     constructor(props) {
@@ -18,7 +19,7 @@ export default class HomePage extends Component {
     // endpoint to call on server to ask if user is in room
     // lifecycle method: alter behavior of component
     // component just rendered for the first time on the screen
-    // async keyword: asychronoues operation inside the component
+    // async keyword: asychronous operation inside the component
     // calling on server could take a while to whole app doesnt wait for this method
     async componentDidMount() {
         fetch('/api/user-in-room')
@@ -45,6 +46,9 @@ export default class HomePage extends Component {
                         <Button color="primary" to="/join" component={ Link }>
                             Join a Room
                         </Button>
+                        <Button color="dedault" to="/info" component={ Link }>
+                            Info
+                        </Button>
                         <Button color="secondary" to="/create" component={ Link }>
                             Create a Room
                         </Button>
@@ -70,6 +74,7 @@ export default class HomePage extends Component {
                         return this.state.roomCode ? (<Redirect to={`/room/${this.state.roomCode}`}/>) : (this.renderHomePage()); //ternary operator, if room code redirect to room otherwise render homepage
                     }}/>
                     <Route path='/join' component={RoomJoinPage}/>
+                    <Route path='/info' component={Info}/>
                     <Route path='/create' component={CreateRoomPage}/>
                     <Route 
                         path="/room/:roomCode" 
