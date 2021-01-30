@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width initial-scale=1" />
-        <title>Room Controller</title>
+        <title>Listening Room</title>
         {% load static %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link
@@ -14,9 +14,11 @@
         <link rel="shortcut icon" href="#"/> <!--- fixed? favicon.ico error -->
     </head>
     <body>
-       <div id="main">
-            <div id="app"></div>   <!-- react code will go in here to render all the components -->
-        </div>
+        <div id="gradient"> <!---add gradient styling -->
+            <div id="main">
+                    <div id="app"></div>   <!-- react code will go in here to render all the components -->
+                </div>
+            </div>
         <script src="{% static "frontend/main.js" %}"></script>     <!-- load main bundled js -->
     </body>
 </html>
